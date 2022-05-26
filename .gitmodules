@@ -1,0 +1,3 @@
+[submodule "fuel-scraper"]
+	path = fuel-scraper
+	url = git@github.com:germankhivrenko/fuel-scraper.git

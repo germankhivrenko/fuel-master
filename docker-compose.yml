@@ -1,0 +1,28 @@
+version: "3.3"
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  fm-mongo-volume:
+    external: true
+
+services:
+  fuel-scraper:
+    build: ./fuel-scraper
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: "mongo:5"
+    restart: always
+    volumes:
+      - fm-mongo-volume:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
