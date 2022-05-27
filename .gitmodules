@@ -1,3 +1,6 @@
 [submodule "fuel-scraper"]
 	path = fuel-scraper
 	url = git@github.com:germankhivrenko/fuel-scraper.git
+[submodule "fuelgram"]
+	path = fuelgram
+	url = git@github.com:germankhivrenko/fuelgram.git
