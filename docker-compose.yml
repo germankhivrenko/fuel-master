@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.4"
 
 networks:
   default:
@@ -6,7 +6,6 @@ networks:
 
 volumes:
   fm-mongo-volume:
-    external: true
 
 services:
   fuel-scraper:
@@ -24,12 +23,27 @@ services:
       - mongo
 
   mongo:
-    image: "mongo:5"
+    hostname: mongo
+    image: mongo:5
     restart: always
     volumes:
       - fm-mongo-volume:/data/db
+      - /home/herman/Projects/fuel-master/mongodb.local.key:/etc/mongo/mongodb.local.key
     ports:
       - 27017:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
+      interval: 10s
+      start_period: 20s
+    entrypoint:
+      - bash
+      - -c
+      - |
+          cp /etc/mongo/mongodb.local.key /etc/mongo/mongodb.key
+          chmod 400 /etc/mongo/mongodb.key
+          chown 999:999 /etc/mongo/mongodb.key
+          exec docker-entrypoint.sh $$@
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongodb.key
